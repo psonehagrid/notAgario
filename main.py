@@ -4,19 +4,17 @@ import pygame
 import gfood
 import sys
 
-screen_width, screen_height = 700, 700
+screen_width, screen_height = 1280, 720
 window = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Game")
 
 
 def food_gen(pellets):
-
-    max_pellets = 2
+    max_pellets = 200
     i = 0
     while i < max_pellets:
-
         pellets.append(gfood.Food(random.randint(10, screen_width-10),
-                                  random.randint(10, screen_width-10),
+                                  random.randint(10, screen_height-10),
                                   pygame.Color(random.randint(0, 200),
                                                random.randint(0, 200),
                                                random.randint(0, 200)),
@@ -47,6 +45,7 @@ def main():
                        ), 40)
     event = pygame.event.poll()
     while run:
+        p.check_collision(pellets)
         if event.type == pygame.MOUSEMOTION:
             p.c_point()
             p.v_point()
