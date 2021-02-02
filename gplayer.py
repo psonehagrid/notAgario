@@ -4,17 +4,16 @@ import constants
 
 
 class Player(constants.Var):
-
     def __init__(self, x, y, color, radius):
         super().__init__(x, y, color, radius)
         self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
         self.speed = 0.3
-        self.slow = 40
+        self.fov = 1
         self.mass = 10
         self.pellets = []
 
-    def draw(self, window):
-        pygame.draw.circle(window, self.color, (self.x, self.y), self.radius)
+    def draw(self, second_screen):
+        pygame.draw.circle(second_screen, self.color, (self.x, self.y), self.radius)
 
     def c_point(self):
         return f"Circle at X: {self.x}, Y: {self.y}"
@@ -25,6 +24,7 @@ class Player(constants.Var):
         return f"Mouse at {position_str}"
 
     def move(self):
+        Player.field_of_view(self)
         vector_x = self.mouse_x - self.x
         vector_y = self.mouse_y - self.y
         magnitude = math.sqrt(vector_x**2+vector_y**2)
@@ -37,18 +37,25 @@ class Player(constants.Var):
     def eat_food(self):
         self.radius += 0.26
         self.mass += 0.26
+        self.fov += 1
 
     def check_collision(self, pellets):
         index = 0
         food_eaten = False
         for food in pellets:
-
             distance = math.sqrt((self.x-food.x) ** 2 + (self.y - food.y) ** 2)
             if distance < self.radius:
                 Player.eat_food(self)
                 food_eaten = True
-
                 break
             index += 1
         if food_eaten:
             pellets.pop(index)
+
+    def field_of_view(self):
+        sx = 150+self.fov
+        dy = 150+self.fov
+        m = self.x - (sx/2)
+        n = self.y - (dy/2)
+        c = pygame.Rect(m, n, sx, dy)
+        pass
